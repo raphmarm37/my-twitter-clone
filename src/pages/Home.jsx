@@ -1,11 +1,14 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useTweets } from '../hooks/useTweets';
+import { useTheme } from '../hooks/useTheme';
 import TweetComposer from '../components/tweets/TweetComposer';
 import TweetCard from '../components/tweets/TweetCard';
+import ThemeToggle from '../components/common/ThemeToggle';
 
 function Home() {
   const { user, userData, loading, handleLogout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const {
     tweets,
     loadingTweets,
@@ -157,22 +160,25 @@ function Home() {
           style={{
             padding: 'var(--space-5)',
             marginBottom: 'var(--space-5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
           }}
         >
-          <div>
-            <h1 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-text-primary)', marginBottom: 'var(--space-1)' }}>
-              Welcome back!
-            </h1>
-            <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
-              {user?.email}
-            </p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-4)' }}>
+            <div>
+              <h1 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-text-primary)', marginBottom: 'var(--space-1)' }}>
+                Welcome back!
+              </h1>
+              <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
+                {user?.email}
+              </p>
+            </div>
+            <button onClick={handleLogout} className="btn-danger">
+              Logout
+            </button>
           </div>
-          <button onClick={handleLogout} className="btn-danger">
-            Logout
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 'var(--space-3)', borderTop: '1px solid var(--color-border)' }}>
+            <span style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>Theme</span>
+            <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
+          </div>
         </div>
 
         {/* Feed Section */}

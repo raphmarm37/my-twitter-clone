@@ -187,154 +187,180 @@ function Profile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Loading...</p>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--color-bg-secondary)' }}
+      >
+        <div className="flex flex-col items-center gap-3">
+          <div
+            className="w-8 h-8 rounded-full border-2 animate-spin"
+            style={{
+              borderColor: 'var(--color-border)',
+              borderTopColor: 'var(--color-primary)'
+            }}
+          />
+          <p style={{ color: 'var(--color-text-secondary)' }}>Loading...</p>
+        </div>
       </div>
     );
   }
 
   const isOwnProfile = currentUser?.uid === userId;
+  const isFollowing = currentUserData?.following?.includes(userId);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-2xl mx-auto px-4">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: 'var(--color-bg-secondary)',
+        padding: 'var(--space-6) var(--space-4)'
+      }}
+    >
+      <div style={{ maxWidth: '600px', margin: '0 auto' }}>
         {/* Profile Header */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <div className="flex items-start justify-between mb-4">
+        <div className="card" style={{ padding: 'var(--space-5)', marginBottom: 'var(--space-5)' }}>
+          <div className="flex items-start justify-between" style={{ marginBottom: 'var(--space-4)' }}>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              <h1 style={{
+                fontSize: '20px',
+                fontWeight: '700',
+                color: 'var(--color-text-primary)',
+                marginBottom: 'var(--space-1)'
+              }}>
                 {profileUser?.email || 'Loading...'}
               </h1>
-              <p className="text-gray-600 text-sm">
+              <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
                 Joined {formatAccountDate(tweets[0]?.createdAt)}
               </p>
             </div>
             {isOwnProfile ? (
-              <button
-                className="px-4 py-2 rounded-lg text-sm font-medium"
-                style={{
-                  backgroundColor: '#3b82f6',
-                  color: 'white',
-                  border: 'none'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#2563eb';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#3b82f6';
-                }}
-              >
+              <button className="btn-secondary">
                 Edit Profile
               </button>
             ) : (
               <button
                 onClick={handleFollowToggle}
                 disabled={followLoading}
-                className="px-6 py-2 rounded-lg text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{
-                  backgroundColor: currentUserData?.following?.includes(userId) ? 'transparent' : '#1d9bf0',
-                  color: currentUserData?.following?.includes(userId) ? '#1d9bf0' : 'white',
-                  border: currentUserData?.following?.includes(userId) ? '2px solid #1d9bf0' : 'none'
-                }}
-                onMouseEnter={(e) => {
-                  if (!followLoading) {
-                    if (currentUserData?.following?.includes(userId)) {
-                      e.currentTarget.style.backgroundColor = '#ffebee';
-                      e.currentTarget.style.borderColor = '#dc2626';
-                      e.currentTarget.style.color = '#dc2626';
-                      e.currentTarget.textContent = 'Unfollow';
-                    } else {
-                      e.currentTarget.style.backgroundColor = '#1a8cd8';
-                    }
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!followLoading) {
-                    if (currentUserData?.following?.includes(userId)) {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                      e.currentTarget.style.borderColor = '#1d9bf0';
-                      e.currentTarget.style.color = '#1d9bf0';
-                      e.currentTarget.textContent = 'Following';
-                    } else {
-                      e.currentTarget.style.backgroundColor = '#1d9bf0';
-                    }
-                  }
-                }}
+                className={isFollowing ? 'btn-follow following' : 'btn-follow'}
               >
-                {followLoading ? 'Loading...' : currentUserData?.following?.includes(userId) ? 'Following' : 'Follow'}
+                {followLoading ? 'Loading...' : isFollowing ? 'Following' : 'Follow'}
               </button>
             )}
           </div>
 
-          <div className="flex gap-6 text-sm">
+          <div className="flex gap-4" style={{ fontSize: '14px' }}>
             <div>
-              <span className="font-bold text-gray-900">{tweets.length}</span>
-              <span className="text-gray-600 ml-1">Tweets</span>
+              <span style={{ fontWeight: '700', color: 'var(--color-text-primary)' }}>{tweets.length}</span>
+              <span style={{ color: 'var(--color-text-secondary)', marginLeft: '4px' }}>Tweets</span>
             </div>
             <div>
-              <span className="font-bold text-gray-900">{profileUserData?.followers?.length || 0}</span>
-              <span className="text-gray-600 ml-1">Followers</span>
+              <span style={{ fontWeight: '700', color: 'var(--color-text-primary)' }}>{profileUserData?.followers?.length || 0}</span>
+              <span style={{ color: 'var(--color-text-secondary)', marginLeft: '4px' }}>Followers</span>
             </div>
             <div>
-              <span className="font-bold text-gray-900">{profileUserData?.following?.length || 0}</span>
-              <span className="text-gray-600 ml-1">Following</span>
+              <span style={{ fontWeight: '700', color: 'var(--color-text-primary)' }}>{profileUserData?.following?.length || 0}</span>
+              <span style={{ color: 'var(--color-text-secondary)', marginLeft: '4px' }}>Following</span>
             </div>
           </div>
         </div>
 
         {/* User's Tweets */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Tweets</h2>
+        <div className="card" style={{ overflow: 'hidden' }}>
+          <div style={{
+            padding: 'var(--space-4)',
+            borderBottom: '1px solid var(--color-border)'
+          }}>
+            <h2 style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              color: 'var(--color-text-primary)'
+            }}>
+              Tweets
+            </h2>
+          </div>
 
-          {loadingTweets ? (
-            <div className="flex items-center justify-center py-8">
-              <p className="text-gray-600">Loading tweets...</p>
-            </div>
-          ) : tweets.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-600">
-                {isOwnProfile ? "You haven't posted any tweets yet." : "This user hasn't posted any tweets yet."}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {tweets.map((tweet) => (
-                <div key={tweet.id} className="border border-gray-200 rounded-lg p-4 shadow-sm">
-                  <div className="flex items-start justify-between mb-2">
-                    <span className="font-semibold text-gray-900">{tweet.userEmail}</span>
-                    <span className="text-sm text-gray-500">{formatTimestamp(tweet.createdAt)}</span>
-                  </div>
-                  <p className="text-gray-900 mb-3">{tweet.content}</p>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1 text-sm" style={{ color: '#6b7280' }}>
-                      <span className="text-lg">♡</span>
-                      <span>{tweet.likes?.length || 0}</span>
+          <div style={{ padding: 'var(--space-4)' }}>
+            {loadingTweets ? (
+              <div className="flex items-center justify-center" style={{ padding: 'var(--space-8)' }}>
+                <div className="flex flex-col items-center gap-3">
+                  <div
+                    className="w-6 h-6 rounded-full border-2 animate-spin"
+                    style={{
+                      borderColor: 'var(--color-border)',
+                      borderTopColor: 'var(--color-primary)'
+                    }}
+                  />
+                  <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>Loading tweets...</p>
+                </div>
+              </div>
+            ) : tweets.length === 0 ? (
+              <div className="text-center" style={{ padding: 'var(--space-8)' }}>
+                <svg
+                  width="48"
+                  height="48"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  style={{ margin: '0 auto var(--space-4)', color: 'var(--color-text-muted)' }}
+                >
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                <p style={{ color: 'var(--color-text-secondary)', fontSize: '15px' }}>
+                  {isOwnProfile ? "You haven't posted any tweets yet." : "This user hasn't posted any tweets yet."}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {tweets.map((tweet) => (
+                  <div key={tweet.id} className="tweet-card">
+                    <div className="flex items-center justify-between">
+                      <span className="username" style={{ fontSize: '14px' }}>{tweet.userEmail}</span>
+                      <span className="timestamp">{formatTimestamp(tweet.createdAt)}</span>
+                    </div>
+                    <p style={{
+                      color: 'var(--color-text-primary)',
+                      fontSize: '15px',
+                      lineHeight: '1.5',
+                      marginTop: 'var(--space-1)'
+                    }}>
+                      {tweet.content}
+                    </p>
+                    {tweet.imageUrl && (
+                      <div style={{ marginTop: 'var(--space-3)' }}>
+                        <img
+                          src={tweet.imageUrl}
+                          alt="Tweet image"
+                          className="tweet-image"
+                          onClick={() => window.open(tweet.imageUrl, '_blank')}
+                        />
+                      </div>
+                    )}
+                    <div style={{ marginTop: 'var(--space-3)' }}>
+                      <span className="action-btn like" style={{ cursor: 'default' }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        </svg>
+                        <span>{tweet.likes?.length || 0}</span>
+                      </span>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Back to Home */}
-        <div className="mt-6 text-center">
+        <div style={{ marginTop: 'var(--space-5)', textAlign: 'center' }}>
           <button
             onClick={() => navigate('/')}
-            className="text-sm px-4 py-2 rounded"
-            style={{
-              color: '#3b82f6',
-              backgroundColor: 'transparent',
-              border: 'none'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.textDecoration = 'underline';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.textDecoration = 'none';
-            }}
+            className="btn-link"
           >
-            ← Back to Home
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            Back to Home
           </button>
         </div>
       </div>

@@ -66,6 +66,35 @@
   --space-8: 32px;
 }
 
+/* Dark Mode */
+[data-theme="dark"] {
+  --color-primary: #1d9bf0;
+  --color-primary-hover: #1a8cd8;
+  --color-primary-light: #1a3a4d;
+
+  --color-bg-primary: #15202b;
+  --color-bg-secondary: #0d1520;
+  --color-bg-tertiary: #1c2938;
+  --color-bg-hover: #1c2938;
+
+  --color-text-primary: #e7e9ea;
+  --color-text-secondary: #8b98a5;
+  --color-text-muted: #6e767d;
+
+  --color-border: #2f3336;
+  --color-border-hover: #3e4144;
+
+  --color-success-light: #0d2b1f;
+  --color-error-light: #2d1215;
+  --color-warning-light: #2d2510;
+  --color-like-light: #2d1520;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -409,4 +438,102 @@ textarea {
 ::selection {
   background-color: var(--color-primary-light);
   color: var(--color-primary);
+}
+
+/* Theme Toggle Switch */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.theme-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background-color: var(--color-border-hover);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.theme-switch:hover {
+  background-color: var(--color-text-muted);
+}
+
+.theme-switch.active {
+  background-color: var(--color-primary);
+}
+
+.theme-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: var(--radius-full);
+  transition: transform var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-switch.active .theme-switch-knob {
+  transform: translateX(20px);
+}
+
+.theme-switch-knob svg {
+  width: 12px;
+  height: 12px;
+  color: var(--color-text-muted);
+}
+
+/* Follow Button */
+.btn-follow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-primary);
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: var(--radius-full);
+  min-width: 100px;
+  transition: all var(--transition-fast);
+}
+
+.btn-follow:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-follow.following {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-hover);
+}
+
+.btn-follow.following:hover:not(:disabled) {
+  border-color: var(--color-error);
+  color: var(--color-error);
+  background-color: var(--color-error-light);
+}
+
+/* Link Button */
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.btn-link:hover {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
 }
