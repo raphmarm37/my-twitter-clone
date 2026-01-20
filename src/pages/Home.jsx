@@ -17,6 +17,7 @@ function Home() {
     postReply,
     deleteReply,
     updateReply,
+    likeReply,
   } = useTweets(user);
 
   const [activeTab, setActiveTab] = useState('forYou');
@@ -25,6 +26,7 @@ function Home() {
   const [deletingTweetId, setDeletingTweetId] = useState(null);
   const [likingTweetId, setLikingTweetId] = useState(null);
   const [deletingReplyId, setDeletingReplyId] = useState(null);
+  const [likingReplyId, setLikingReplyId] = useState(null);
 
   // Memoized filtered tweets
   const filteredTweets = useMemo(() => {
@@ -98,6 +100,19 @@ function Home() {
     setSuccessMessage('Reply updated successfully!');
     setTimeout(() => setSuccessMessage(''), 3000);
   }, [updateReply]);
+
+  const handleLikeReply = useCallback(async (tweetId, replyId, currentLikes) => {
+    setLikingReplyId(replyId);
+    try {
+      await likeReply(tweetId, replyId, currentLikes);
+    } catch (error) {
+      console.error('Error liking reply:', error);
+      setErrorMessage('Failed to like reply. Please try again.');
+      setTimeout(() => setErrorMessage(''), 3000);
+    } finally {
+      setLikingReplyId(null);
+    }
+  }, [likeReply]);
 
   if (loading) {
     return (
@@ -198,9 +213,11 @@ function Home() {
                   onPostReply={handlePostReply}
                   onDeleteReply={handleDeleteReply}
                   onUpdateReply={handleUpdateReply}
+                  onLikeReply={handleLikeReply}
                   deletingTweetId={deletingTweetId}
                   likingTweetId={likingTweetId}
                   deletingReplyId={deletingReplyId}
+                  likingReplyId={likingReplyId}
                   setErrorMessage={setErrorMessage}
                 />
               ))}

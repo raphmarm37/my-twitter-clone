@@ -10,12 +10,16 @@ const ReplyCard = memo(({
   currentUserId,
   onDelete,
   onUpdate,
+  onLike,
   deletingReplyId,
+  likingReplyId,
   setErrorMessage,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState('');
   const [savingEdit, setSavingEdit] = useState(false);
+
+  const hasLiked = reply.likes?.includes(currentUserId);
 
   const {
     image: editImage,
@@ -230,6 +234,24 @@ const ReplyCard = memo(({
               />
             </div>
           )}
+          {/* Like Button */}
+          <div className="mt-2">
+            <button
+              onClick={() => onLike(tweetId, reply.id, reply.likes || [])}
+              disabled={likingReplyId === reply.id}
+              className="flex items-center gap-1 text-xs px-1.5 py-0.5 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ color: hasLiked ? '#dc2626' : '#6b7280', backgroundColor: 'transparent', border: 'none' }}
+              onMouseEnter={(e) => {
+                if (likingReplyId !== reply.id) {
+                  e.currentTarget.style.backgroundColor = '#fef2f2';
+                }
+              }}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              <span>{hasLiked ? '♥' : '♡'}</span>
+              <span>{reply.likes?.length || 0}</span>
+            </button>
+          </div>
         </>
       )}
     </div>

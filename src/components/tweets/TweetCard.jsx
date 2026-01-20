@@ -16,9 +16,11 @@ const TweetCard = memo(({
   onPostReply,
   onDeleteReply,
   onUpdateReply,
+  onLikeReply,
   deletingTweetId,
   likingTweetId,
   deletingReplyId,
+  likingReplyId,
   setErrorMessage,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -310,7 +312,9 @@ const TweetCard = memo(({
                   currentUserId={currentUserId}
                   onDelete={handleDeleteReply}
                   onUpdate={onUpdateReply}
+                  onLike={onLikeReply}
                   deletingReplyId={deletingReplyId}
+                  likingReplyId={likingReplyId}
                   setErrorMessage={setErrorMessage}
                 />
               ))}

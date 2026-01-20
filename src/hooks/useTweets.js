@@ -144,8 +144,22 @@ export const useTweets = (user) => {
       userId: user.uid,
       userEmail: user.email,
       createdAt: serverTimestamp(),
+      likes: [],
       ...(imageUrl && { imageUrl })
     });
+  }, [user]);
+
+  const likeReply = useCallback(async (tweetId, replyId, currentLikes) => {
+    if (!user) return;
+
+    const hasLiked = currentLikes.includes(user.uid);
+    const replyRef = doc(db, 'tweets', tweetId, 'replies', replyId);
+
+    if (hasLiked) {
+      await updateDoc(replyRef, { likes: arrayRemove(user.uid) });
+    } else {
+      await updateDoc(replyRef, { likes: arrayUnion(user.uid) });
+    }
   }, [user]);
 
   const deleteReply = useCallback(async (tweetId, replyId) => {
@@ -178,5 +192,6 @@ export const useTweets = (user) => {
     postReply,
     deleteReply,
     updateReply,
+    likeReply,
   };
 };
