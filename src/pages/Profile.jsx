@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, query, where, onSnapshot, doc, updateDoc, arrayUnion, arrayRemove, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
+import { formatTimestamp } from '../utils/formatters';
 
 function Profile() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -175,21 +176,6 @@ function Profile() {
     } finally {
       setFollowLoading(false);
     }
-  };
-
-  const formatTimestamp = (timestamp) => {
-    if (!timestamp) return 'Just now';
-
-    const date = timestamp.toDate();
-    const now = new Date();
-    const diffInSeconds = Math.floor((now - date) / 1000);
-
-    if (diffInSeconds < 60) return 'Just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`;
-
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   const formatAccountDate = (timestamp) => {
