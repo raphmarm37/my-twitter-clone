@@ -113,10 +113,10 @@ const TweetCard = memo(({
   return (
     <div className="border border-gray-200 rounded-lg p-4 shadow-sm relative">
       {/* Header */}
-      <div className="flex items-start justify-between mb-2">
+      <div className="flex items-start justify-between">
         <Link
           to={`/profile/${tweet.userId}`}
-          className="font-semibold text-gray-900 hover:underline"
+          className="font-semibold text-gray-900 hover:underline text-sm"
         >
           {tweet.userEmail}
         </Link>
@@ -246,9 +246,9 @@ const TweetCard = memo(({
         </div>
       ) : (
         <>
-          <p className="text-gray-900 mb-3">{tweet.content}</p>
+          <p className="text-gray-900 mt-1">{tweet.content}</p>
           {tweet.imageUrl && (
-            <div className="mb-3">
+            <div className="mt-2">
               <img
                 src={tweet.imageUrl}
                 alt="Tweet image"
@@ -262,7 +262,7 @@ const TweetCard = memo(({
       )}
 
       {/* Actions */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 mt-3">
         <button
           onClick={() => onLike(tweet.id, tweet.likes || [])}
           disabled={likingTweetId === tweet.id}

@@ -90,10 +90,10 @@ const ReplyCard = memo(({
 
   return (
     <div className="bg-gray-50 rounded-lg p-3 ml-4">
-      <div className="flex items-start justify-between mb-1">
+      <div className="flex items-start justify-between">
         <Link
           to={`/profile/${reply.userId}`}
-          className="font-semibold text-sm text-gray-900 hover:underline"
+          className="font-semibold text-xs text-gray-900 hover:underline"
         >
           {reply.userEmail}
         </Link>
@@ -222,9 +222,9 @@ const ReplyCard = memo(({
         </div>
       ) : (
         <>
-          <p className="text-sm text-gray-700">{reply.content}</p>
+          <p className="text-sm text-gray-700 mt-0.5">{reply.content}</p>
           {reply.imageUrl && (
-            <div className="mt-2">
+            <div className="mt-1.5">
               <img
                 src={reply.imageUrl}
                 alt="Reply image"
