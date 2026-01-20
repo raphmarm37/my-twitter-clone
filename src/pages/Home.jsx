@@ -28,7 +28,6 @@ function Home() {
   const [deletingReplyId, setDeletingReplyId] = useState(null);
   const [likingReplyId, setLikingReplyId] = useState(null);
 
-  // Memoized filtered tweets
   const filteredTweets = useMemo(() => {
     if (activeTab === 'forYou') {
       return tweets.filter(tweet =>
@@ -116,15 +115,33 @@ function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Loading...</p>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: 'var(--color-bg-secondary)' }}
+      >
+        <div className="flex flex-col items-center gap-3">
+          <div
+            className="w-8 h-8 rounded-full border-2 animate-spin"
+            style={{
+              borderColor: 'var(--color-border)',
+              borderTopColor: 'var(--color-primary)'
+            }}
+          />
+          <p style={{ color: 'var(--color-text-secondary)' }}>Loading...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundColor: 'var(--color-bg-secondary)',
+        padding: 'var(--space-6) var(--space-4)'
+      }}
+    >
+      <div style={{ maxWidth: '600px', margin: '0 auto' }}>
         {/* Create Tweet Form */}
         <TweetComposer
           user={user}
@@ -135,94 +152,106 @@ function Home() {
         />
 
         {/* Welcome Section */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Welcome, {user?.email}!
-              </h1>
-              <p className="text-gray-600">You are now logged in</p>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
-              style={{ backgroundColor: '#dc2626', color: 'white' }}
-              onMouseEnter={(e) => e.target.style.backgroundColor = '#b91c1c'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = '#dc2626'}
-            >
-              Logout
-            </button>
+        <div
+          className="card"
+          style={{
+            padding: 'var(--space-5)',
+            marginBottom: 'var(--space-5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          <div>
+            <h1 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-text-primary)', marginBottom: 'var(--space-1)' }}>
+              Welcome back!
+            </h1>
+            <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
+              {user?.email}
+            </p>
           </div>
+          <button onClick={handleLogout} className="btn-danger">
+            Logout
+          </button>
         </div>
 
         {/* Feed Section */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Home Feed</h2>
-
+        <div className="card" style={{ overflow: 'hidden' }}>
           {/* Tabs */}
-          <div className="flex border-b border-gray-200 mb-4">
+          <div className="flex" style={{ borderBottom: '1px solid var(--color-border)' }}>
             <button
               onClick={() => setActiveTab('forYou')}
-              className="flex-1 py-3 px-4 text-center font-semibold transition-colors"
-              style={{
-                color: activeTab === 'forYou' ? '#1d9bf0' : '#536471',
-                backgroundColor: 'transparent',
-                border: 'none',
-                borderBottom: activeTab === 'forYou' ? '3px solid #1d9bf0' : '3px solid transparent'
-              }}
+              className={`tab-btn ${activeTab === 'forYou' ? 'active' : ''}`}
             >
               For You
             </button>
             <button
               onClick={() => setActiveTab('all')}
-              className="flex-1 py-3 px-4 text-center font-semibold transition-colors"
-              style={{
-                color: activeTab === 'all' ? '#1d9bf0' : '#536471',
-                backgroundColor: 'transparent',
-                border: 'none',
-                borderBottom: activeTab === 'all' ? '3px solid #1d9bf0' : '3px solid transparent'
-              }}
+              className={`tab-btn ${activeTab === 'all' ? 'active' : ''}`}
             >
               All Tweets
             </button>
           </div>
 
-          {loadingTweets ? (
-            <div className="flex items-center justify-center py-8">
-              <p className="text-gray-600">Loading tweets...</p>
-            </div>
-          ) : filteredTweets.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-600">
-                {activeTab === 'forYou'
-                  ? "No tweets from people you follow yet. Try following some users or switch to 'All Tweets'!"
-                  : "No tweets yet. Be the first to post!"}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {filteredTweets.map((tweet) => (
-                <TweetCard
-                  key={tweet.id}
-                  tweet={tweet}
-                  currentUserId={user?.uid}
-                  replies={tweetReplies[tweet.id] || []}
-                  onDelete={handleDeleteTweet}
-                  onUpdate={handleUpdateTweet}
-                  onLike={handleLikeTweet}
-                  onPostReply={handlePostReply}
-                  onDeleteReply={handleDeleteReply}
-                  onUpdateReply={handleUpdateReply}
-                  onLikeReply={handleLikeReply}
-                  deletingTweetId={deletingTweetId}
-                  likingTweetId={likingTweetId}
-                  deletingReplyId={deletingReplyId}
-                  likingReplyId={likingReplyId}
-                  setErrorMessage={setErrorMessage}
-                />
-              ))}
-            </div>
-          )}
+          {/* Content */}
+          <div style={{ padding: 'var(--space-4)' }}>
+            {loadingTweets ? (
+              <div className="flex items-center justify-center" style={{ padding: 'var(--space-8)' }}>
+                <div className="flex flex-col items-center gap-3">
+                  <div
+                    className="w-6 h-6 rounded-full border-2 animate-spin"
+                    style={{
+                      borderColor: 'var(--color-border)',
+                      borderTopColor: 'var(--color-primary)'
+                    }}
+                  />
+                  <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>Loading tweets...</p>
+                </div>
+              </div>
+            ) : filteredTweets.length === 0 ? (
+              <div className="text-center" style={{ padding: 'var(--space-8)' }}>
+                <svg
+                  width="48"
+                  height="48"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  style={{ margin: '0 auto var(--space-4)', color: 'var(--color-text-muted)' }}
+                >
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                <p style={{ color: 'var(--color-text-secondary)', fontSize: '15px' }}>
+                  {activeTab === 'forYou'
+                    ? "No tweets from people you follow yet. Try following some users or switch to 'All Tweets'!"
+                    : "No tweets yet. Be the first to post!"}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredTweets.map((tweet) => (
+                  <TweetCard
+                    key={tweet.id}
+                    tweet={tweet}
+                    currentUserId={user?.uid}
+                    replies={tweetReplies[tweet.id] || []}
+                    onDelete={handleDeleteTweet}
+                    onUpdate={handleUpdateTweet}
+                    onLike={handleLikeTweet}
+                    onPostReply={handlePostReply}
+                    onDeleteReply={handleDeleteReply}
+                    onUpdateReply={handleUpdateReply}
+                    onLikeReply={handleLikeReply}
+                    deletingTweetId={deletingTweetId}
+                    likingTweetId={likingTweetId}
+                    deletingReplyId={deletingReplyId}
+                    likingReplyId={likingReplyId}
+                    setErrorMessage={setErrorMessage}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

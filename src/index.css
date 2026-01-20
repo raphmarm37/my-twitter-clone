@@ -1,8 +1,412 @@
 @import "tailwindcss";
 
+:root {
+  /* Primary Colors */
+  --color-primary: #1d9bf0;
+  --color-primary-hover: #1a8cd8;
+  --color-primary-light: #e8f5fd;
+
+  /* Secondary Colors */
+  --color-secondary: #7856ff;
+  --color-secondary-hover: #6344e0;
+
+  /* Background Colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f7f9fa;
+  --color-bg-tertiary: #eff3f4;
+  --color-bg-hover: #f7f7f7;
+
+  /* Text Colors */
+  --color-text-primary: #0f1419;
+  --color-text-secondary: #536471;
+  --color-text-muted: #8b98a5;
+  --color-text-link: #1d9bf0;
+
+  /* Border Colors */
+  --color-border: #eff3f4;
+  --color-border-hover: #cfd9de;
+
+  /* Status Colors */
+  --color-success: #00ba7c;
+  --color-success-light: #e8f8f2;
+  --color-error: #f4212e;
+  --color-error-light: #fee8ea;
+  --color-warning: #ffad1f;
+  --color-warning-light: #fff8e6;
+
+  /* Like Color */
+  --color-like: #f91880;
+  --color-like-light: #fce4ef;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  --shadow-card: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Spacing Scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-text-primary);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary);
+}
+
+/* Button Reset & Base Styles */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--transition-fast);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Primary Button */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: var(--radius-full);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background-color: transparent;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 15px;
+  border: 1px solid var(--color-border-hover);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-bg-hover);
+  border-color: var(--color-text-muted);
+}
+
+/* Danger Button */
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-error);
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #dc1e28;
+}
+
+/* Icon Button */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.btn-icon:hover:not(:disabled) {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.btn-icon.danger:hover:not(:disabled) {
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+}
+
+.btn-icon.like:hover:not(:disabled) {
+  background-color: var(--color-like-light);
+  color: var(--color-like);
+}
+
+/* Card Styles */
+.card {
+  background-color: var(--color-bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow var(--transition-normal);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Tweet Card Specific */
+.tweet-card {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  transition: background-color var(--transition-fast);
+}
+
+.tweet-card:hover {
+  background-color: var(--color-bg-hover);
+}
+
+/* Reply Card Specific */
+.reply-card {
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-left: var(--space-4);
+}
+
+/* Input Styles */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  font-family: inherit;
+  font-size: 15px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+  width: 100%;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+textarea {
+  resize: none;
+  line-height: 1.5;
+}
+
+/* Action Buttons (like, reply, etc.) */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.action-btn:hover {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+.action-btn.like:hover,
+.action-btn.like.active {
+  color: var(--color-like);
+  background-color: var(--color-like-light);
+}
+
+.action-btn.active {
+  color: var(--color-like);
+}
+
+/* Tabs */
+.tab-btn {
+  flex: 1;
+  padding: var(--space-4);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.tab-btn:hover {
+  background-color: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+.tab-btn.active {
+  color: var(--color-text-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+/* Alert Styles */
+.alert {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.alert-success {
+  background-color: var(--color-success-light);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+}
+
+.alert-error {
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+}
+
+/* Username link */
+.username {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-text-primary);
+  transition: color var(--transition-fast);
+}
+
+.username:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+/* Timestamp */
+.timestamp {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* Image styles */
+.tweet-image {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.tweet-image:hover {
+  opacity: 0.92;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 4px;
+  background-color: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-normal);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-hover);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
 }

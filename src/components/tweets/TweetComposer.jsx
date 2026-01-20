@@ -1,7 +1,6 @@
-import React, { useState, memo } from 'react';
+import { useState, memo } from 'react';
 import { TWEET_MAX_LENGTH } from '../../utils/constants';
 import { useImageUpload } from '../../hooks/useImageUpload';
-import ImageUploader from '../common/ImageUploader';
 
 const TweetComposer = memo(({ user, onPostTweet, successMessage, errorMessage, setErrorMessage }) => {
   const [content, setContent] = useState('');
@@ -70,20 +69,26 @@ const TweetComposer = memo(({ user, onPostTweet, successMessage, errorMessage, s
   const isDisabled = posting || (!content.trim() && !image);
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">Create Tweet</h2>
+    <div className="card" style={{ padding: 'var(--space-5)', marginBottom: 'var(--space-5)' }}>
+      <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: 'var(--space-4)', color: 'var(--color-text-primary)' }}>
+        Create Tweet
+      </h2>
 
       {successMessage && (
-        <div className="bg-green-50 border-2 border-green-500 px-4 py-3 rounded-lg mb-4">
-          <span style={{ color: '#16a34a' }}>{successMessage}</span>
+        <div className="alert alert-success" style={{ marginBottom: 'var(--space-4)' }}>
+          {successMessage}
         </div>
       )}
 
       {errorMessage && (
-        <div className="bg-red-50 border-2 border-red-600 px-4 py-3 rounded-lg mb-4">
-          <div className="flex items-start">
-            <span className="mr-3 text-xl" style={{ color: '#dc2626' }}>⚠</span>
-            <span style={{ color: '#dc2626' }}>{errorMessage}</span>
+        <div className="alert alert-error" style={{ marginBottom: 'var(--space-4)' }}>
+          <div className="flex items-center gap-2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <span>{errorMessage}</span>
           </div>
         </div>
       )}
@@ -94,58 +99,100 @@ const TweetComposer = memo(({ user, onPostTweet, successMessage, errorMessage, s
           onChange={handleContentChange}
           placeholder="What's happening?"
           disabled={posting}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-lg placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 resize-none text-gray-900"
           rows="4"
+          style={{ marginBottom: 'var(--space-3)' }}
         />
 
-        <ImageUploader
-          imagePreview={imagePreview}
-          uploadProgress={uploadProgress}
-          uploading={uploading}
-          inputRef={inputRef}
-          onImageSelect={(e) => handleImageSelect(e, setErrorMessage)}
-          onRemoveImage={handleRemoveImage}
-          onTriggerInput={triggerFileInput}
-          disabled={posting}
-          showButton={false}
-          previewMaxHeight="16rem"
-        />
+        {/* Image Preview */}
+        {imagePreview && (
+          <div className="relative inline-block" style={{ marginBottom: 'var(--space-3)' }}>
+            <img
+              src={imagePreview}
+              alt="Preview"
+              className="tweet-image"
+              style={{ maxHeight: '250px' }}
+            />
+            <button
+              type="button"
+              onClick={handleRemoveImage}
+              className="absolute flex items-center justify-center text-white"
+              style={{
+                top: '8px',
+                right: '8px',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                transition: 'background-color var(--transition-fast)'
+              }}
+              title="Remove image"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
-        <div className="flex items-center justify-between mt-3">
+        {/* Upload Progress */}
+        {uploading && uploadProgress > 0 && uploadProgress < 100 && (
+          <div style={{ marginBottom: 'var(--space-3)' }}>
+            <div className="flex items-center gap-2" style={{ marginBottom: 'var(--space-1)' }}>
+              <span style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>Uploading image...</span>
+              <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--color-primary)' }}>{uploadProgress}%</span>
+            </div>
+            <div className="progress-bar">
+              <div className="progress-bar-fill" style={{ width: `${uploadProgress}%` }} />
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
+            {/* Image Upload Button */}
+            <input
+              type="file"
+              ref={inputRef}
+              onChange={(e) => handleImageSelect(e, setErrorMessage)}
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              className="hidden"
+              disabled={posting}
+            />
             <button
               type="button"
               onClick={triggerFileInput}
               disabled={posting || imagePreview}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-md text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ color: '#2563eb', backgroundColor: 'transparent', border: '1px solid #2563eb' }}
-              onMouseEnter={(e) => {
-                if (!posting && !imagePreview) {
-                  e.currentTarget.style.backgroundColor = '#eff6ff';
-                }
-              }}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              className="btn-icon"
               title="Add image (JPG, PNG, GIF, WebP - max 5MB)"
             >
-              <span>📷</span>
-              <span>Add Image</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
+              </svg>
             </button>
+
+            {/* Character count */}
             <span
-              className={`text-sm ${charCount === TWEET_MAX_LENGTH ? 'font-bold' : charCount >= 260 ? 'font-semibold' : ''}`}
-              style={{ color: charCount === TWEET_MAX_LENGTH ? '#dc2626' : charCount >= 260 ? '#ea580c' : '#4b5563' }}
+              style={{
+                fontSize: '14px',
+                fontWeight: charCount >= 260 ? '600' : '400',
+                color: charCount === TWEET_MAX_LENGTH
+                  ? 'var(--color-error)'
+                  : charCount >= 260
+                    ? 'var(--color-warning)'
+                    : 'var(--color-text-muted)'
+              }}
             >
               {charCount}/{TWEET_MAX_LENGTH}
             </span>
           </div>
+
           <button
             type="submit"
             disabled={isDisabled}
-            className="px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#2563eb', color: 'white' }}
-            onMouseEnter={(e) => !isDisabled && (e.target.style.backgroundColor = '#1d4ed8')}
-            onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
+            className="btn-primary"
+            style={{ minWidth: '100px' }}
           >
-            {uploading ? 'Uploading...' : posting ? 'Posting...' : 'Post tweet'}
+            {uploading ? 'Uploading...' : posting ? 'Posting...' : 'Post'}
           </button>
         </div>
       </form>

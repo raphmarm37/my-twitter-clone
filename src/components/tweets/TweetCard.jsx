@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react';
+import { useState, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { TWEET_MAX_LENGTH } from '../../utils/constants';
 import { formatTimestamp, canEditItem } from '../../utils/formatters';
@@ -111,79 +111,74 @@ const TweetCard = memo(({
   };
 
   return (
-    <div className="border border-gray-200 rounded-lg p-4 shadow-sm relative">
+    <div className="tweet-card">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <Link
-          to={`/profile/${tweet.userId}`}
-          className="font-semibold text-gray-900 hover:underline text-sm"
-        >
-          {tweet.userEmail}
-        </Link>
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">
-            {formatTimestamp(tweet.createdAt)}
-            {tweet.edited && <span className="text-xs text-gray-400 ml-1">(edited)</span>}
+          <Link to={`/profile/${tweet.userId}`} className="username">
+            {tweet.userEmail}
+          </Link>
+          <span className="timestamp">
+            · {formatTimestamp(tweet.createdAt)}
+            {tweet.edited && <span className="ml-1">(edited)</span>}
           </span>
-          {isOwner && (
-            <>
-              {canEdit && !isEditing && (
-                <button
-                  onClick={handleStartEdit}
-                  className="text-sm px-2 py-1 rounded transition-colors"
-                  style={{ color: '#2563eb', backgroundColor: 'transparent', border: 'none' }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#eff6ff'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                  title="Edit tweet"
-                >
-                  ✎
-                </button>
-              )}
-              <button
-                onClick={handleDelete}
-                disabled={deletingTweetId === tweet.id}
-                className="text-sm px-2 py-1 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ color: '#dc2626', backgroundColor: 'transparent', border: 'none' }}
-                onMouseEnter={(e) => {
-                  if (deletingTweetId !== tweet.id) {
-                    e.currentTarget.style.backgroundColor = '#fef2f2';
-                  }
-                }}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                title="Delete tweet"
-              >
-                {deletingTweetId === tweet.id ? '...' : '✕'}
-              </button>
-            </>
-          )}
         </div>
+        {isOwner && (
+          <div className="flex items-center gap-1">
+            {canEdit && !isEditing && (
+              <button
+                onClick={handleStartEdit}
+                className="btn-icon"
+                title="Edit tweet"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+              </button>
+            )}
+            <button
+              onClick={handleDelete}
+              disabled={deletingTweetId === tweet.id}
+              className="btn-icon danger"
+              title="Delete tweet"
+            >
+              {deletingTweetId === tweet.id ? (
+                <span className="text-xs">...</span>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Content or Edit Mode */}
       {isEditing ? (
-        <div className="mb-3">
+        <div className="mt-3">
           <textarea
             value={editContent}
             onChange={handleEditContentChange}
-            className="w-full p-3 border border-blue-500 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+            className="w-full"
             rows="3"
+            placeholder="What's happening?"
           />
 
           {editImagePreview && (
-            <div className="relative mt-2 inline-block">
+            <div className="relative mt-3 inline-block">
               <img
                 src={editImagePreview}
                 alt="Edit preview"
-                className="max-h-48 rounded-lg border border-gray-200"
-                style={{ maxWidth: '100%', objectFit: 'contain' }}
+                className="tweet-image"
+                style={{ maxHeight: '200px' }}
               />
               <button
                 type="button"
                 onClick={handleRemoveEditImage}
-                className="absolute top-1 right-1 w-6 h-6 rounded-full flex items-center justify-center transition-colors text-sm"
-                style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', color: 'white' }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.9)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)'}
+                className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center text-white text-sm"
+                style={{ backgroundColor: 'rgba(0, 0, 0, 0.75)' }}
                 title="Remove image"
               >
                 ✕
@@ -200,27 +195,30 @@ const TweetCard = memo(({
             disabled={savingEdit}
           />
 
-          <div className="flex items-center justify-between mt-2">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between mt-3">
+            <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => editInputRef.current?.click()}
                 disabled={savingEdit || editImagePreview}
-                className="flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ color: '#2563eb', backgroundColor: 'transparent', border: '1px solid #2563eb' }}
-                onMouseEnter={(e) => {
-                  if (!savingEdit && !editImagePreview) {
-                    e.currentTarget.style.backgroundColor = '#eff6ff';
-                  }
-                }}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                title="Change image"
+                className="btn-icon"
+                title="Add image"
               >
-                <span>📷</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <polyline points="21 15 16 10 5 21" />
+                </svg>
               </button>
               <span
                 className="text-sm"
-                style={{ color: editContent.length === TWEET_MAX_LENGTH ? '#dc2626' : editContent.length >= 260 ? '#ea580c' : '#4b5563' }}
+                style={{
+                  color: editContent.length === TWEET_MAX_LENGTH
+                    ? 'var(--color-error)'
+                    : editContent.length >= 260
+                      ? 'var(--color-warning)'
+                      : 'var(--color-text-muted)'
+                }}
               >
                 {editContent.length}/{TWEET_MAX_LENGTH}
               </span>
@@ -229,16 +227,11 @@ const TweetCard = memo(({
               <button
                 onClick={handleSaveEdit}
                 disabled={savingEdit || (!editContent.trim() && !editImagePreview)}
-                className="px-4 py-1 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ backgroundColor: '#2563eb', color: 'white', border: 'none' }}
+                className="btn-primary"
               >
                 {savingEdit ? 'Saving...' : 'Save'}
               </button>
-              <button
-                onClick={handleCancelEdit}
-                className="px-4 py-1 rounded-md text-sm font-medium"
-                style={{ backgroundColor: 'transparent', color: '#6b7280', border: '1px solid #d1d5db' }}
-              >
+              <button onClick={handleCancelEdit} className="btn-secondary">
                 Cancel
               </button>
             </div>
@@ -246,14 +239,16 @@ const TweetCard = memo(({
         </div>
       ) : (
         <>
-          <p className="text-gray-900 mt-1">{tweet.content}</p>
+          <p className="mt-1" style={{ color: 'var(--color-text-primary)', fontSize: '15px', lineHeight: '1.5' }}>
+            {tweet.content}
+          </p>
           {tweet.imageUrl && (
-            <div className="mt-2">
+            <div className="mt-3">
               <img
                 src={tweet.imageUrl}
                 alt="Tweet image"
-                className="rounded-lg border border-gray-200 cursor-pointer hover:opacity-95 transition-opacity"
-                style={{ maxWidth: '100%', maxHeight: '400px', objectFit: 'contain' }}
+                className="tweet-image"
+                style={{ maxHeight: '400px' }}
                 onClick={() => window.open(tweet.imageUrl, '_blank')}
               />
             </div>
@@ -262,38 +257,32 @@ const TweetCard = memo(({
       )}
 
       {/* Actions */}
-      <div className="flex items-center gap-4 mt-3">
+      <div className="flex items-center gap-2 mt-3">
         <button
           onClick={() => onLike(tweet.id, tweet.likes || [])}
           disabled={likingTweetId === tweet.id}
-          className="flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ color: hasLiked ? '#dc2626' : '#6b7280', backgroundColor: 'transparent', border: 'none' }}
-          onMouseEnter={(e) => {
-            if (likingTweetId !== tweet.id) {
-              e.currentTarget.style.backgroundColor = '#fef2f2';
-            }
-          }}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          className={`action-btn like ${hasLiked ? 'active' : ''}`}
         >
-          <span className="text-lg">{hasLiked ? '♥' : '♡'}</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill={hasLiked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
           <span>{tweet.likes?.length || 0}</span>
         </button>
 
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors"
-          style={{ color: '#6b7280', backgroundColor: 'transparent', border: 'none' }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          className="action-btn"
         >
-          <span className="text-lg">💬</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
           <span>{replies.length}</span>
         </button>
       </div>
 
       {/* Reply Section */}
       {isExpanded && (
-        <div className="mt-4 border-t border-gray-200 pt-4">
+        <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--color-border)' }}>
           <ReplyForm
             tweetId={tweet.id}
             currentUserId={currentUserId}
@@ -303,7 +292,7 @@ const TweetCard = memo(({
           />
 
           {replies.length > 0 && (
-            <div className="space-y-3">
+            <div className="space-y-3 mt-4">
               {replies.map((reply) => (
                 <ReplyCard
                   key={reply.id}

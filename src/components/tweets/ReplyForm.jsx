@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react';
+import { useState, memo } from 'react';
 import { useImageUpload } from '../../hooks/useImageUpload';
 
 const ReplyForm = memo(({
@@ -64,30 +64,35 @@ const ReplyForm = memo(({
   const isDisabled = posting || (!content.trim() && !image);
 
   return (
-    <div className="mb-4">
+    <div style={{ marginBottom: 'var(--space-4)' }}>
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Write your reply..."
-        className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
         rows="2"
+        style={{ marginBottom: 'var(--space-2)', fontSize: '14px' }}
       />
 
       {imagePreview && (
-        <div className="relative mt-2 inline-block">
+        <div className="relative inline-block" style={{ marginBottom: 'var(--space-2)' }}>
           <img
             src={imagePreview}
             alt="Reply preview"
-            className="max-h-40 rounded-lg border border-gray-200"
-            style={{ maxWidth: '100%', objectFit: 'contain' }}
+            className="tweet-image"
+            style={{ maxHeight: '150px' }}
           />
           <button
             type="button"
             onClick={handleRemoveImage}
-            className="absolute top-1 right-1 w-6 h-6 rounded-full flex items-center justify-center transition-colors text-sm"
-            style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', color: 'white' }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.9)'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.7)'}
+            className="absolute flex items-center justify-center text-white text-xs"
+            style={{
+              top: '4px',
+              right: '4px',
+              width: '24px',
+              height: '24px',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(0, 0, 0, 0.75)'
+            }}
             title="Remove image"
           >
             ✕
@@ -96,16 +101,13 @@ const ReplyForm = memo(({
       )}
 
       {uploading && uploadProgress > 0 && uploadProgress < 100 && (
-        <div className="mt-2">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs text-gray-600">Uploading...</span>
-            <span className="text-xs font-medium" style={{ color: '#2563eb' }}>{uploadProgress}%</span>
+        <div style={{ marginBottom: 'var(--space-2)' }}>
+          <div className="flex items-center gap-2" style={{ marginBottom: '4px' }}>
+            <span style={{ fontSize: '12px', color: 'var(--color-text-secondary)' }}>Uploading...</span>
+            <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--color-primary)' }}>{uploadProgress}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-1.5">
-            <div
-              className="h-1.5 rounded-full transition-all duration-300"
-              style={{ width: `${uploadProgress}%`, backgroundColor: '#2563eb' }}
-            />
+          <div className="progress-bar" style={{ height: '3px' }}>
+            <div className="progress-bar-fill" style={{ width: `${uploadProgress}%` }} />
           </div>
         </div>
       )}
@@ -119,38 +121,35 @@ const ReplyForm = memo(({
         disabled={posting}
       />
 
-      <div className="flex items-center justify-between mt-2">
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={posting || imagePreview}
-            className="flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ color: '#2563eb', backgroundColor: 'transparent', border: '1px solid #2563eb' }}
-            onMouseEnter={(e) => {
-              if (!posting && !imagePreview) {
-                e.currentTarget.style.backgroundColor = '#eff6ff';
-              }
-            }}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-            title="Add image"
-          >
-            <span>📷</span>
-          </button>
-        </div>
+      <div className="flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={posting || imagePreview}
+          className="btn-icon"
+          style={{ width: '32px', height: '32px' }}
+          title="Add image"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
+        </button>
+
         <div className="flex gap-2">
           <button
             onClick={handleSubmit}
             disabled={isDisabled}
-            className="px-4 py-2 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#2563eb', color: 'white', border: 'none' }}
+            className="btn-primary"
+            style={{ padding: '8px 16px', fontSize: '14px' }}
           >
-            {uploading ? 'Uploading...' : posting ? 'Posting...' : 'Post Reply'}
+            {uploading ? 'Uploading...' : posting ? 'Posting...' : 'Reply'}
           </button>
           <button
             onClick={handleCancel}
-            className="px-4 py-2 rounded-md text-sm font-medium"
-            style={{ backgroundColor: 'transparent', color: '#6b7280', border: '1px solid #d1d5db' }}
+            className="btn-secondary"
+            style={{ padding: '8px 16px', fontSize: '14px' }}
           >
             Cancel
           </button>
