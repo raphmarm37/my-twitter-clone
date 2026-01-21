@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Profile from './pages/Profile'
 import Sidebar from './components/layout/Sidebar'
+import RightSidebar from './components/layout/RightSidebar'
 import { auth, db } from './firebase/config'
 import { onAuthStateChanged } from 'firebase/auth'
 import './App.css'
@@ -48,6 +49,8 @@ function App() {
             <Route path="/profile/:userId" element={<Profile />} />
           </Routes>
         </main>
+
+        <RightSidebar />
       </div>
     </BrowserRouter>
   )

@@ -112,10 +112,7 @@ function Home() {
 
   if (loading) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: 'var(--color-bg-secondary)' }}
-      >
+      <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner size="md" text="Loading..." />
       </div>
     );
@@ -129,7 +126,6 @@ function Home() {
     <div
       className="min-h-screen"
       style={{
-        backgroundColor: 'var(--color-bg-secondary)',
         padding: 'var(--space-6) var(--space-4)'
       }}
     >
