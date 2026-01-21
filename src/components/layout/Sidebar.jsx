@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { NavLink } from 'react-router-dom';
-import { HomeIcon, UserIcon, LoginIcon, UserPlusIcon, LogoutIcon } from '../common/Icons';
+import { HomeIcon, UserIcon, LoginIcon, UserPlusIcon, LogoutIcon, AppLogo } from '../common/Icons';
 
 const Sidebar = memo(({ currentUser, onLogout }) => {
   return (
@@ -8,9 +8,7 @@ const Sidebar = memo(({ currentUser, onLogout }) => {
       <div className="sidebar-content">
         {/* Logo */}
         <div className="sidebar-logo">
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-          </svg>
+          <AppLogo size={52} />
         </div>
 
         {/* Navigation */}
