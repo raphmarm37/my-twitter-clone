@@ -129,7 +129,7 @@ function Home() {
         padding: 'var(--space-6) var(--space-4)'
       }}
     >
-      <div className="max-w-xl mx-auto">
+      <div>
         {/* Create Tweet Form */}
         <TweetComposer
           user={user}

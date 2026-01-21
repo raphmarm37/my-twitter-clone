@@ -181,7 +181,7 @@ function Profile() {
         padding: 'var(--space-6) var(--space-4)'
       }}
     >
-      <div className="max-w-xl mx-auto">
+      <div>
         {/* Profile Header */}
         <div className="card p-5 mb-5">
           <div className="flex items-start justify-between mb-4">
