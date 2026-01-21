@@ -39,16 +39,16 @@ function App() {
 
   return (
     <BrowserRouter>
-      <nav style={{ padding: '20px', borderBottom: '1px solid #ccc' }}>
+      <nav style={{ padding: '20px' }}>
         <Link to="/" style={{ marginRight: '20px' }}>Home</Link>
         {currentUser && (
           <Link to={`/profile/${currentUser.uid}`} style={{ marginRight: '20px' }}>Profile</Link>
         )}
         <Link to="/login" style={{ marginRight: '20px' }}>Login</Link>
         <Link to="/signup">Signup</Link>
-        <span style={{ marginLeft: 'auto', float: 'right', color: firebaseConnected ? 'green' : 'red' }}>
+        {/* <span style={{ marginLeft: 'auto', float: 'right', color: firebaseConnected ? 'green' : 'red' }}>
           Firebase Connected: {firebaseConnected ? 'Yes' : 'No'}
-        </span>
+        </span> */}
       </nav>
 
       <div style={{ padding: '20px' }}>

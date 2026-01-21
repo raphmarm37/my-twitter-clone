@@ -2,13 +2,17 @@ import { useState, useMemo, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useTweets } from '../hooks/useTweets';
 import { useTheme } from '../hooks/useTheme';
+import { useNotification } from '../hooks/useNotification';
 import TweetComposer from '../components/tweets/TweetComposer';
 import TweetCard from '../components/tweets/TweetCard';
 import ThemeToggle from '../components/common/ThemeToggle';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import EmptyState from '../components/common/EmptyState';
 
 function Home() {
   const { user, userData, loading, handleLogout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const { successMessage, errorMessage, showSuccess, showError, setErrorMessage } = useNotification();
   const {
     tweets,
     loadingTweets,
@@ -24,8 +28,6 @@ function Home() {
   } = useTweets(user);
 
   const [activeTab, setActiveTab] = useState('forYou');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const [deletingTweetId, setDeletingTweetId] = useState(null);
   const [likingTweetId, setLikingTweetId] = useState(null);
   const [deletingReplyId, setDeletingReplyId] = useState(null);
@@ -42,30 +44,26 @@ function Home() {
 
   const handlePostTweet = useCallback(async (content, imageUrl) => {
     await postTweet(content, imageUrl);
-    setSuccessMessage('Tweet posted successfully!');
-    setTimeout(() => setSuccessMessage(''), 3000);
-  }, [postTweet]);
+    showSuccess('Tweet posted successfully!');
+  }, [postTweet, showSuccess]);
 
   const handleDeleteTweet = useCallback(async (tweetId) => {
     setDeletingTweetId(tweetId);
     try {
       await deleteTweet(tweetId);
-      setSuccessMessage('Tweet deleted successfully!');
-      setTimeout(() => setSuccessMessage(''), 3000);
+      showSuccess('Tweet deleted successfully!');
     } catch (error) {
       console.error('Error deleting tweet:', error);
-      setErrorMessage('Failed to delete tweet. Please try again.');
-      setTimeout(() => setErrorMessage(''), 3000);
+      showError('Failed to delete tweet. Please try again.');
     } finally {
       setDeletingTweetId(null);
     }
-  }, [deleteTweet]);
+  }, [deleteTweet, showSuccess, showError]);
 
   const handleUpdateTweet = useCallback(async (tweetId, content, imageUrl, removeImage) => {
     await updateTweet(tweetId, content, imageUrl, removeImage);
-    setSuccessMessage('Tweet updated successfully!');
-    setTimeout(() => setSuccessMessage(''), 3000);
-  }, [updateTweet]);
+    showSuccess('Tweet updated successfully!');
+  }, [updateTweet, showSuccess]);
 
   const handleLikeTweet = useCallback(async (tweetId, currentLikes) => {
     setLikingTweetId(tweetId);
@@ -73,12 +71,11 @@ function Home() {
       await likeTweet(tweetId, currentLikes);
     } catch (error) {
       console.error('Error liking tweet:', error);
-      setErrorMessage('Failed to like tweet. Please try again.');
-      setTimeout(() => setErrorMessage(''), 3000);
+      showError('Failed to like tweet. Please try again.');
     } finally {
       setLikingTweetId(null);
     }
-  }, [likeTweet]);
+  }, [likeTweet, showError]);
 
   const handlePostReply = useCallback(async (tweetId, content, imageUrl) => {
     await postReply(tweetId, content, imageUrl);
@@ -90,18 +87,16 @@ function Home() {
       await deleteReply(tweetId, replyId);
     } catch (error) {
       console.error('Error deleting reply:', error);
-      setErrorMessage('Failed to delete reply. Please try again.');
-      setTimeout(() => setErrorMessage(''), 3000);
+      showError('Failed to delete reply. Please try again.');
     } finally {
       setDeletingReplyId(null);
     }
-  }, [deleteReply]);
+  }, [deleteReply, showError]);
 
   const handleUpdateReply = useCallback(async (tweetId, replyId, content, imageUrl, removeImage) => {
     await updateReply(tweetId, replyId, content, imageUrl, removeImage);
-    setSuccessMessage('Reply updated successfully!');
-    setTimeout(() => setSuccessMessage(''), 3000);
-  }, [updateReply]);
+    showSuccess('Reply updated successfully!');
+  }, [updateReply, showSuccess]);
 
   const handleLikeReply = useCallback(async (tweetId, replyId, currentLikes) => {
     setLikingReplyId(replyId);
@@ -109,12 +104,11 @@ function Home() {
       await likeReply(tweetId, replyId, currentLikes);
     } catch (error) {
       console.error('Error liking reply:', error);
-      setErrorMessage('Failed to like reply. Please try again.');
-      setTimeout(() => setErrorMessage(''), 3000);
+      showError('Failed to like reply. Please try again.');
     } finally {
       setLikingReplyId(null);
     }
-  }, [likeReply]);
+  }, [likeReply, showError]);
 
   if (loading) {
     return (
@@ -122,19 +116,14 @@ function Home() {
         className="min-h-screen flex items-center justify-center"
         style={{ backgroundColor: 'var(--color-bg-secondary)' }}
       >
-        <div className="flex flex-col items-center gap-3">
-          <div
-            className="w-8 h-8 rounded-full border-2 animate-spin"
-            style={{
-              borderColor: 'var(--color-border)',
-              borderTopColor: 'var(--color-primary)'
-            }}
-          />
-          <p style={{ color: 'var(--color-text-secondary)' }}>Loading...</p>
-        </div>
+        <LoadingSpinner size="md" text="Loading..." />
       </div>
     );
   }
+
+  const emptyMessage = activeTab === 'forYou'
+    ? "No tweets from people you follow yet. Try following some users or switch to 'All Tweets'!"
+    : "No tweets yet. Be the first to post!";
 
   return (
     <div
@@ -144,7 +133,7 @@ function Home() {
         padding: 'var(--space-6) var(--space-4)'
       }}
     >
-      <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+      <div className="max-w-xl mx-auto">
         {/* Create Tweet Form */}
         <TweetComposer
           user={user}
@@ -155,19 +144,13 @@ function Home() {
         />
 
         {/* Welcome Section */}
-        <div
-          className="card"
-          style={{
-            padding: 'var(--space-5)',
-            marginBottom: 'var(--space-5)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-4)' }}>
+        <div className="card p-5 mb-5">
+          <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--color-text-primary)', marginBottom: 'var(--space-1)' }}>
+              <h1 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>
                 Welcome back!
               </h1>
-              <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
+              <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                 {user?.email}
               </p>
             </div>
@@ -175,14 +158,17 @@ function Home() {
               Logout
             </button>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 'var(--space-3)', borderTop: '1px solid var(--color-border)' }}>
-            <span style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>Theme</span>
+          <div
+            className="flex items-center justify-between pt-3"
+            style={{ borderTop: '1px solid var(--color-border)' }}
+          >
+            <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Theme</span>
             <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
           </div>
         </div>
 
         {/* Feed Section */}
-        <div className="card" style={{ overflow: 'hidden' }}>
+        <div className="card overflow-hidden">
           {/* Tabs */}
           <div className="flex" style={{ borderBottom: '1px solid var(--color-border)' }}>
             <button
@@ -200,39 +186,11 @@ function Home() {
           </div>
 
           {/* Content */}
-          <div style={{ padding: 'var(--space-4)' }}>
+          <div className="p-4">
             {loadingTweets ? (
-              <div className="flex items-center justify-center" style={{ padding: 'var(--space-8)' }}>
-                <div className="flex flex-col items-center gap-3">
-                  <div
-                    className="w-6 h-6 rounded-full border-2 animate-spin"
-                    style={{
-                      borderColor: 'var(--color-border)',
-                      borderTopColor: 'var(--color-primary)'
-                    }}
-                  />
-                  <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>Loading tweets...</p>
-                </div>
-              </div>
+              <LoadingSpinner size="sm" text="Loading tweets..." />
             ) : filteredTweets.length === 0 ? (
-              <div className="text-center" style={{ padding: 'var(--space-8)' }}>
-                <svg
-                  width="48"
-                  height="48"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  style={{ margin: '0 auto var(--space-4)', color: 'var(--color-text-muted)' }}
-                >
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-                <p style={{ color: 'var(--color-text-secondary)', fontSize: '15px' }}>
-                  {activeTab === 'forYou'
-                    ? "No tweets from people you follow yet. Try following some users or switch to 'All Tweets'!"
-                    : "No tweets yet. Be the first to post!"}
-                </p>
-              </div>
+              <EmptyState message={emptyMessage} />
             ) : (
               <div className="space-y-4">
                 {filteredTweets.map((tweet) => (
