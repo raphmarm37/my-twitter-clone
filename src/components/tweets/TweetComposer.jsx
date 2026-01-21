@@ -104,7 +104,7 @@ const TweetComposer = memo(({ user, onPostTweet, successMessage, errorMessage, s
           placeholder="What's happening?"
           disabled={posting}
           rows="4"
-          className="mb-3"
+          className="mb-3 mt-5"
         />
 
         {/* Image Preview */}

@@ -1,31 +1,21 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { signOut } from 'firebase/auth'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Profile from './pages/Profile'
+import Sidebar from './components/layout/Sidebar'
 import { auth, db } from './firebase/config'
 import { onAuthStateChanged } from 'firebase/auth'
 import './App.css'
 
 function App() {
-  const [firebaseConnected, setFirebaseConnected] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)
 
   useEffect(() => {
-    try {
-      if (auth && db) {
-        console.log('Firebase Connected: Yes')
-        console.log('Auth:', auth)
-        console.log('Firestore:', db)
-        setFirebaseConnected(true)
-      } else {
-        console.log('Firebase Connected: No')
-        setFirebaseConnected(false)
-      }
-    } catch (error) {
-      console.error('Firebase Connection Error:', error)
-      setFirebaseConnected(false)
+    if (auth && db) {
+      console.log('Firebase Connected: Yes')
     }
   }, [])
 
@@ -37,27 +27,27 @@ function App() {
     return () => unsubscribe()
   }, [])
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth)
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
+
   return (
     <BrowserRouter>
-      <nav style={{ padding: '20px' }}>
-        <Link to="/" style={{ marginRight: '20px' }}>Home</Link>
-        {currentUser && (
-          <Link to={`/profile/${currentUser.uid}`} style={{ marginRight: '20px' }}>Profile</Link>
-        )}
-        <Link to="/login" style={{ marginRight: '20px' }}>Login</Link>
-        <Link to="/signup">Signup</Link>
-        {/* <span style={{ marginLeft: 'auto', float: 'right', color: firebaseConnected ? 'green' : 'red' }}>
-          Firebase Connected: {firebaseConnected ? 'Yes' : 'No'}
-        </span> */}
-      </nav>
+      <div className="app-layout">
+        <Sidebar currentUser={currentUser} onLogout={handleLogout} />
 
-      <div style={{ padding: '20px' }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/profile/:userId" element={<Profile />} />
-        </Routes>
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/profile/:userId" element={<Profile />} />
+          </Routes>
+        </main>
       </div>
     </BrowserRouter>
   )

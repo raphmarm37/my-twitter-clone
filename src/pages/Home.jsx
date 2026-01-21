@@ -10,7 +10,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
 
 function Home() {
-  const { user, userData, loading, handleLogout } = useAuth();
+  const { user, userData, loading } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const { successMessage, errorMessage, showSuccess, showError, setErrorMessage } = useNotification();
   const {
@@ -143,9 +143,9 @@ function Home() {
           setErrorMessage={setErrorMessage}
         />
 
-        {/* Welcome Section */}
+        {/* User Info & Settings */}
         <div className="card p-5 mb-5">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between">
             <div>
               <h1 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>
                 Welcome back!
@@ -154,16 +154,10 @@ function Home() {
                 {user?.email}
               </p>
             </div>
-            <button onClick={handleLogout} className="btn-danger">
-              Logout
-            </button>
-          </div>
-          <div
-            className="flex items-center justify-between pt-3"
-            style={{ borderTop: '1px solid var(--color-border)' }}
-          >
-            <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Theme</span>
-            <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
+            <div className="flex items-center gap-2">
+              <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Theme</span>
+              <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
+            </div>
           </div>
         </div>
 
