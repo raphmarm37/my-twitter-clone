@@ -64,34 +64,67 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
-        <div>
-          <h1 className="text-3xl font-bold text-center text-gray-900">Log In</h1>
-          <p className="mt-2 text-center text-sm text-gray-600">
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{
+        backgroundColor: 'var(--color-bg-secondary)',
+        padding: 'var(--space-6) var(--space-4)'
+      }}
+    >
+      <div
+        className="card"
+        style={{
+          maxWidth: '400px',
+          width: '100%',
+          padding: 'var(--space-8)'
+        }}
+      >
+        <div style={{ textAlign: 'center', marginBottom: 'var(--space-6)' }}>
+          <h1 style={{
+            fontSize: '28px',
+            fontWeight: '700',
+            color: 'var(--color-text-primary)',
+            marginBottom: 'var(--space-2)'
+          }}>
+            Log In
+          </h1>
+          <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)' }}>
             Sign in to your account
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 border-2 border-red-600 px-4 py-3 rounded-lg font-medium shadow-sm">
-            <div className="flex items-start">
-              <span className="mr-3 text-xl" style={{ color: '#dc2626' }}>⚠ </span>
-              <span style={{ color: '#dc2626' }}>{error}</span>
+          <div className="alert-error" style={{ marginBottom: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-2)' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <span>{error}</span>
             </div>
           </div>
         )}
 
         {success && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+          <div className="alert-success" style={{ marginBottom: 'var(--space-4)' }}>
             {success}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: 'var(--color-text-secondary)',
+                  marginBottom: 'var(--space-1)'
+                }}
+              >
                 Email
               </label>
               <input
@@ -101,12 +134,20 @@ function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 disabled={loading}
-                className="text-black mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:text-gray-700 disabled:bg-gray-100"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: 'var(--color-text-secondary)',
+                  marginBottom: 'var(--space-1)'
+                }}
+              >
                 Password
               </label>
               <input
@@ -116,7 +157,6 @@ function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 disabled={loading}
-                className="text-black mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 focus:text-gray-700"
               />
             </div>
           </div>
@@ -124,15 +164,31 @@ function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed"
+            className="btn-primary"
+            style={{
+              width: '100%',
+              marginTop: 'var(--space-5)',
+              padding: 'var(--space-3) var(--space-4)'
+            }}
           >
             {loading ? 'Logging in...' : 'Log In'}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-gray-600">
+        <p style={{
+          marginTop: 'var(--space-5)',
+          textAlign: 'center',
+          fontSize: '14px',
+          color: 'var(--color-text-secondary)'
+        }}>
           Don't have an account?{' '}
-          <a href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+          <a
+            href="/signup"
+            style={{
+              fontWeight: '600',
+              color: 'var(--color-primary)'
+            }}
+          >
             Sign up
           </a>
         </p>
