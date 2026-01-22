@@ -1,8 +1,8 @@
-import { useState, memo } from 'react';
+import { useState, memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { TWEET_MAX_LENGTH } from '../../utils/constants';
 import { formatTimestamp, canEditItem } from '../../utils/formatters';
-import { useImageUpload } from '../../hooks/useImageUpload';
+import { useEditableContent } from '../../hooks/useEditableContent';
 import { HeartIcon, CommentIcon, EditIcon, TrashIcon, ImageIcon } from '../common/Icons';
 import ImagePreview from '../common/ImagePreview';
 import ReplyForm from './ReplyForm';
@@ -26,77 +26,29 @@ const TweetCard = memo(({
   setErrorMessage,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editContent, setEditContent] = useState('');
-  const [savingEdit, setSavingEdit] = useState(false);
+
+  const handleUpdate = useCallback(async (itemId, content, imageUrl, removeImage) => {
+    await onUpdate(itemId, content, imageUrl, removeImage);
+  }, [onUpdate]);
 
   const {
-    image: editImage,
-    imagePreview: editImagePreview,
-    inputRef: editInputRef,
-    handleImageSelect: handleEditImageSelect,
-    handleRemoveImage: handleRemoveEditImage,
-    uploadImage,
-    setExistingImage,
-  } = useImageUpload();
+    isEditing,
+    editContent,
+    savingEdit,
+    editImagePreview,
+    editInputRef,
+    charCountColor,
+    handleStartEdit,
+    handleCancelEdit,
+    handleSaveEdit,
+    handleEditContentChange,
+    handleEditImageSelect,
+    handleRemoveEditImage,
+  } = useEditableContent(tweet, handleUpdate, setErrorMessage, `tweets/${currentUserId}`);
 
   const isOwner = tweet.userId === currentUserId;
   const canEdit = canEditItem(tweet, currentUserId);
   const hasLiked = tweet.likes?.includes(currentUserId);
-
-  const handleStartEdit = () => {
-    setIsEditing(true);
-    setEditContent(tweet.content);
-    if (tweet.imageUrl) {
-      setExistingImage(tweet.imageUrl);
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-    setEditContent('');
-    handleRemoveEditImage();
-  };
-
-  const handleSaveEdit = async () => {
-    if (!editContent.trim() && !editImagePreview) {
-      setErrorMessage('Tweet cannot be empty');
-      setTimeout(() => setErrorMessage(''), 3000);
-      return;
-    }
-
-    setSavingEdit(true);
-
-    try {
-      let imageUrl = tweet.imageUrl;
-      let removeImage = false;
-
-      if (editImage) {
-        const fileName = `tweets/${currentUserId}/${Date.now()}_${editImage.name}`;
-        imageUrl = await uploadImage(editImage, fileName);
-      } else if (!editImagePreview && tweet.imageUrl) {
-        removeImage = true;
-        imageUrl = null;
-      }
-
-      await onUpdate(tweet.id, editContent, imageUrl, removeImage);
-      setIsEditing(false);
-      setEditContent('');
-      handleRemoveEditImage();
-    } catch (error) {
-      console.error('Error editing tweet:', error);
-      setErrorMessage('Failed to edit tweet. Please try again.');
-      setTimeout(() => setErrorMessage(''), 3000);
-    } finally {
-      setSavingEdit(false);
-    }
-  };
-
-  const handleEditContentChange = (e) => {
-    if (e.target.value.length <= TWEET_MAX_LENGTH) {
-      setEditContent(e.target.value);
-    }
-  };
 
   const handleDelete = () => {
     const confirmDelete = window.confirm('Are you sure you want to delete this tweet?');
@@ -111,12 +63,6 @@ const TweetCard = memo(({
       onDeleteReply(tweetId, replyId);
     }
   };
-
-  const charCountColor = editContent.length === TWEET_MAX_LENGTH
-    ? 'var(--color-error)'
-    : editContent.length >= 260
-      ? 'var(--color-warning)'
-      : 'var(--color-text-muted)';
 
   return (
     <div className="tweet-card">
@@ -203,7 +149,7 @@ const TweetCard = memo(({
             </div>
             <div className="flex gap-2">
               <button
-                onClick={handleSaveEdit}
+                onClick={() => handleSaveEdit(tweet.id)}
                 disabled={savingEdit || (!editContent.trim() && !editImagePreview)}
                 className="btn-primary"
               >
@@ -217,7 +163,7 @@ const TweetCard = memo(({
         </div>
       ) : (
         <>
-          <p className="mt-1 text-[15px] leading-relaxed" style={{ color: 'var(--color-text-primary)' }}>
+          <p className="mt-1 text-[15px] leading-relaxed text-primary">
             {tweet.content}
           </p>
           {tweet.imageUrl && (
@@ -255,7 +201,7 @@ const TweetCard = memo(({
 
       {/* Reply Section */}
       {isExpanded && (
-        <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--color-border)' }}>
+        <div className="mt-4 pt-4 border-t border-default">
           <ReplyForm
             tweetId={tweet.id}
             currentUserId={currentUserId}

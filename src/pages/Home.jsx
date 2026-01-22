@@ -123,12 +123,7 @@ function Home() {
     : "No tweets yet. Be the first to post!";
 
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        padding: 'var(--space-6) var(--space-4)'
-      }}
-    >
+    <div className="min-h-screen p-6">
       <div>
         {/* Create Tweet Form */}
         <TweetComposer
@@ -143,15 +138,15 @@ function Home() {
         <div className="card p-5 mb-5">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>
+              <h1 className="text-lg font-bold text-primary">
                 Welcome back!
               </h1>
-              <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+              <p className="text-sm text-secondary">
                 {user?.email}
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Theme</span>
+              <span className="text-sm text-secondary">Theme</span>
               <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
             </div>
           </div>
@@ -160,7 +155,7 @@ function Home() {
         {/* Feed Section */}
         <div className="card overflow-hidden">
           {/* Tabs */}
-          <div className="flex" style={{ borderBottom: '1px solid var(--color-border)' }}>
+          <div className="flex border-b border-default">
             <button
               onClick={() => setActiveTab('forYou')}
               className={`tab-btn ${activeTab === 'forYou' ? 'active' : ''}`}

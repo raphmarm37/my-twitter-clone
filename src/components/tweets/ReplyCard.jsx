@@ -1,8 +1,8 @@
-import { useState, memo } from 'react';
+import { memo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { TWEET_MAX_LENGTH } from '../../utils/constants';
 import { formatTimestamp, canEditItem } from '../../utils/formatters';
-import { useImageUpload } from '../../hooks/useImageUpload';
+import { useEditableContent } from '../../hooks/useEditableContent';
 import { HeartIcon, EditIcon, TrashIcon, ImageIcon } from '../common/Icons';
 import ImagePreview from '../common/ImagePreview';
 
@@ -17,84 +17,28 @@ const ReplyCard = memo(({
   likingReplyId,
   setErrorMessage,
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editContent, setEditContent] = useState('');
-  const [savingEdit, setSavingEdit] = useState(false);
-
   const hasLiked = reply.likes?.includes(currentUserId);
-
-  const {
-    image: editImage,
-    imagePreview: editImagePreview,
-    inputRef: editInputRef,
-    handleImageSelect: handleEditImageSelect,
-    handleRemoveImage: handleRemoveEditImage,
-    uploadImage,
-    setExistingImage,
-  } = useImageUpload();
-
   const isOwner = reply.userId === currentUserId;
   const canEdit = canEditItem(reply, currentUserId);
 
-  const handleStartEdit = () => {
-    setIsEditing(true);
-    setEditContent(reply.content);
-    if (reply.imageUrl) {
-      setExistingImage(reply.imageUrl);
-    }
-  };
+  const handleUpdate = useCallback(async (itemId, content, imageUrl, removeImage) => {
+    await onUpdate(tweetId, itemId, content, imageUrl, removeImage);
+  }, [onUpdate, tweetId]);
 
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-    setEditContent('');
-    handleRemoveEditImage();
-  };
-
-  const handleSaveEdit = async () => {
-    if (!editContent.trim() && !editImagePreview) {
-      setErrorMessage('Reply cannot be empty');
-      setTimeout(() => setErrorMessage(''), 3000);
-      return;
-    }
-
-    setSavingEdit(true);
-
-    try {
-      let imageUrl = reply.imageUrl;
-      let removeImage = false;
-
-      if (editImage) {
-        const fileName = `replies/${currentUserId}/${Date.now()}_${editImage.name}`;
-        imageUrl = await uploadImage(editImage, fileName);
-      } else if (!editImagePreview && reply.imageUrl) {
-        removeImage = true;
-        imageUrl = null;
-      }
-
-      await onUpdate(tweetId, reply.id, editContent, imageUrl, removeImage);
-      setIsEditing(false);
-      setEditContent('');
-      handleRemoveEditImage();
-    } catch (error) {
-      console.error('Error editing reply:', error);
-      setErrorMessage('Failed to edit reply. Please try again.');
-      setTimeout(() => setErrorMessage(''), 3000);
-    } finally {
-      setSavingEdit(false);
-    }
-  };
-
-  const handleEditContentChange = (e) => {
-    if (e.target.value.length <= TWEET_MAX_LENGTH) {
-      setEditContent(e.target.value);
-    }
-  };
-
-  const charCountColor = editContent.length === TWEET_MAX_LENGTH
-    ? 'var(--color-error)'
-    : editContent.length >= 260
-      ? 'var(--color-warning)'
-      : 'var(--color-text-muted)';
+  const {
+    isEditing,
+    editContent,
+    savingEdit,
+    editImagePreview,
+    editInputRef,
+    charCountColor,
+    handleStartEdit,
+    handleCancelEdit,
+    handleSaveEdit,
+    handleEditContentChange,
+    handleEditImageSelect,
+    handleRemoveEditImage,
+  } = useEditableContent(reply, handleUpdate, setErrorMessage, `replies/${currentUserId}`);
 
   return (
     <div className="reply-card">
@@ -185,7 +129,7 @@ const ReplyCard = memo(({
             </div>
             <div className="flex gap-2">
               <button
-                onClick={handleSaveEdit}
+                onClick={() => handleSaveEdit(reply.id)}
                 disabled={savingEdit || (!editContent.trim() && !editImagePreview)}
                 className="btn-primary px-3 py-1.5 text-[13px]"
               >
@@ -202,7 +146,7 @@ const ReplyCard = memo(({
         </div>
       ) : (
         <>
-          <p className="mt-1 text-sm leading-snug" style={{ color: 'var(--color-text-primary)' }}>
+          <p className="mt-1 text-sm leading-snug text-primary">
             {reply.content}
           </p>
           {reply.imageUrl && (

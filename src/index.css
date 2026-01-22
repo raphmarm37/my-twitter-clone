@@ -111,6 +111,27 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Text Color Utilities */
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.text-link {
+  color: var(--color-primary);
+}
+
+.border-default {
+  border-color: var(--color-border);
+}
+
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   margin: 0;

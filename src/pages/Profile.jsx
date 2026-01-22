@@ -4,7 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { collection, query, where, onSnapshot, doc, updateDoc, arrayUnion, arrayRemove, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
 import { formatTimestamp } from '../utils/formatters';
-import { HeartIcon, CommentIcon, ArrowLeftIcon } from '../components/common/Icons';
+import { HeartIcon, ArrowLeftIcon } from '../components/common/Icons';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import EmptyState from '../components/common/EmptyState';
 
@@ -175,21 +175,16 @@ function Profile() {
     : "This user hasn't posted any tweets yet.";
 
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        padding: 'var(--space-6) var(--space-4)'
-      }}
-    >
+    <div className="min-h-screen p-6">
       <div>
         {/* Profile Header */}
         <div className="card p-5 mb-5">
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h1 className="text-xl font-bold mb-1" style={{ color: 'var(--color-text-primary)' }}>
+              <h1 className="text-xl font-bold mb-1 text-primary">
                 {profileUser?.email || 'Loading...'}
               </h1>
-              <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+              <p className="text-sm text-secondary">
                 Joined {formatAccountDate(tweets[0]?.createdAt)}
               </p>
             </div>
@@ -208,24 +203,24 @@ function Profile() {
 
           <div className="flex gap-4 text-sm">
             <div>
-              <span className="font-bold" style={{ color: 'var(--color-text-primary)' }}>{tweets.length}</span>
-              <span className="ml-1" style={{ color: 'var(--color-text-secondary)' }}>Tweets</span>
+              <span className="font-bold text-primary">{tweets.length}</span>
+              <span className="ml-1 text-secondary">Tweets</span>
             </div>
             <div>
-              <span className="font-bold" style={{ color: 'var(--color-text-primary)' }}>{profileUserData?.followers?.length || 0}</span>
-              <span className="ml-1" style={{ color: 'var(--color-text-secondary)' }}>Followers</span>
+              <span className="font-bold text-primary">{profileUserData?.followers?.length || 0}</span>
+              <span className="ml-1 text-secondary">Followers</span>
             </div>
             <div>
-              <span className="font-bold" style={{ color: 'var(--color-text-primary)' }}>{profileUserData?.following?.length || 0}</span>
-              <span className="ml-1" style={{ color: 'var(--color-text-secondary)' }}>Following</span>
+              <span className="font-bold text-primary">{profileUserData?.following?.length || 0}</span>
+              <span className="ml-1 text-secondary">Following</span>
             </div>
           </div>
         </div>
 
         {/* User's Tweets */}
         <div className="card overflow-hidden">
-          <div className="p-4" style={{ borderBottom: '1px solid var(--color-border)' }}>
-            <h2 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>
+          <div className="p-4 border-b border-default">
+            <h2 className="text-lg font-bold text-primary">
               Tweets
             </h2>
           </div>
@@ -234,7 +229,7 @@ function Profile() {
             {loadingTweets ? (
               <LoadingSpinner size="sm" text="Loading tweets..." />
             ) : tweets.length === 0 ? (
-              <EmptyState icon={CommentIcon} message={emptyMessage} />
+              <EmptyState message={emptyMessage} />
             ) : (
               <div className="space-y-4">
                 {tweets.map((tweet) => (
@@ -243,7 +238,7 @@ function Profile() {
                       <span className="username text-sm">{tweet.userEmail}</span>
                       <span className="timestamp">{formatTimestamp(tweet.createdAt)}</span>
                     </div>
-                    <p className="mt-1 text-[15px] leading-relaxed" style={{ color: 'var(--color-text-primary)' }}>
+                    <p className="mt-1 text-[15px] leading-relaxed text-primary">
                       {tweet.content}
                     </p>
                     {tweet.imageUrl && (
